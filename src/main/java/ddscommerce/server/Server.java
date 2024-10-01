@@ -2,6 +2,8 @@ package ddscommerce.server;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
+import ddscommerce.middlewares.AuthMiddleware;
+import ddscommerce.server.handlers.AppHandlers;
 import ddscommerce.utils.Initializer;
 import ddscommerce.utils.JavalinRenderer;
 import ddscommerce.utils.PrettyProperties;
@@ -26,6 +28,8 @@ public class Server {
             Integer port = Integer.parseInt(PrettyProperties.getInstance().propertyFromName("server_port"));
             app = Javalin.create(config()).start(port);
 
+            AuthMiddleware.apply(app);
+            AppHandlers.applyHandlers(app);
             Router.init(app);
 
             if (Boolean.parseBoolean(PrettyProperties.getInstance().propertyFromName("dev_mode"))) {
